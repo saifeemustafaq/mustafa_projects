@@ -22,3 +22,15 @@ NEW_PASSWORD=YourNewPassword123 node scripts/reset-password.js
 - If the admin user doesn't exist yet, the script will create it with the password you provide.
 
 After running, sign in with the admin username and the new password.
+
+## backfill-image-url.js
+
+Adds the `imageUrl` field to all existing project documents in MongoDB (set to `""` if missing). Run this once after adding the image URL feature so that every project document has the field and edits persist correctly.
+
+**Usage** (from project root):
+
+```bash
+node scripts/backfill-image-url.js
+```
+
+**Requirements:** `MONGODB_URI` in `.env.local`. Safe to run multiple times.

@@ -127,10 +127,14 @@ export async function updateProject(
     return { success: false, error: "Name and description are required." };
   }
 
+  const rawImageUrl = formData.get("imageUrl");
+  const imageUrl = (rawImageUrl as string)?.trim() ?? "";
+  console.log("[updateProject] projectId:", projectId, "| imageUrl raw:", JSON.stringify(rawImageUrl), "| imageUrl resolved:", JSON.stringify(imageUrl));
+
   const input: CreateProjectInput = {
     name,
     description,
-    imageUrl: (formData.get("imageUrl") as string)?.trim() || undefined,
+    imageUrl,
     prdUrl: (formData.get("prdUrl") as string)?.trim() || undefined,
     pptUrl: (formData.get("pptUrl") as string)?.trim() || undefined,
     githubUrl: (formData.get("githubUrl") as string)?.trim() || undefined,
@@ -143,6 +147,7 @@ export async function updateProject(
 
   try {
     const updated = await updateProjectDb(projectId, input);
+    console.log("[updateProject] result:", updated ? "saved" : "not found", "| imageUrl in input:", JSON.stringify(input.imageUrl));
     return updated ? { success: true } : { success: false, error: "Project not found." };
   } catch (err) {
     console.error(err);

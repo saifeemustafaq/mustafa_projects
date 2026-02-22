@@ -177,21 +177,22 @@ export async function updateProject(
 ): Promise<Project | null> {
   await connectDb();
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
+  const update: Record<string, unknown> = {
+    name: input.name.trim(),
+    description: input.description.trim(),
+    imageUrl: (input.imageUrl ?? "").toString().trim(),
+    prdUrl: input.prdUrl?.trim() ?? "",
+    pptUrl: input.pptUrl?.trim() ?? "",
+    githubUrl: input.githubUrl?.trim() ?? "",
+    demoUrl: input.demoUrl?.trim() ?? "",
+    prdEnabled: input.prdEnabled !== false,
+    pptEnabled: input.pptEnabled !== false,
+    githubEnabled: input.githubEnabled !== false,
+    demoEnabled: input.demoEnabled !== false,
+  };
   const doc = await ProjectModel.findByIdAndUpdate(
     id,
-    {
-      name: input.name.trim(),
-      description: input.description.trim(),
-      imageUrl: input.imageUrl?.trim() ?? "",
-      prdUrl: input.prdUrl?.trim() ?? "",
-      pptUrl: input.pptUrl?.trim() ?? "",
-      githubUrl: input.githubUrl?.trim() ?? "",
-      demoUrl: input.demoUrl?.trim() ?? "",
-      prdEnabled: input.prdEnabled !== false,
-      pptEnabled: input.pptEnabled !== false,
-      githubEnabled: input.githubEnabled !== false,
-      demoEnabled: input.demoEnabled !== false,
-    },
+    { $set: update },
     { new: true }
   ).lean();
   if (!doc) return null;

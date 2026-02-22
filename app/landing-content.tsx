@@ -193,6 +193,7 @@ function ProjectCard({
 }) {
   const [deleting, setDeleting] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
 
   async function handleDelete() {
     if (!confirm(`Delete "${project.name}"?`)) return;
@@ -204,15 +205,42 @@ function ProjectCard({
   }
 
   return (
-    <Card className="min-w-0 h-full flex flex-col">
+    <Card className="min-w-0 h-full flex flex-col pt-0">
       <div className="w-full aspect-video overflow-hidden rounded-t-xl shrink-0 bg-muted">
         {project.imageUrl ? (
-          <img
-            src={project.imageUrl}
-            alt=""
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
+          <>
+            <button
+              type="button"
+              className="relative w-full h-full group cursor-pointer"
+              onClick={() => setImageOpen(true)}
+              aria-label={`View full image for ${project.name}`}
+            >
+              <img
+                src={project.imageUrl}
+                alt=""
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to view image
+                </span>
+              </div>
+            </button>
+            <Dialog open={imageOpen} onOpenChange={setImageOpen}>
+              <DialogContent className="max-w-4xl w-[90vw] p-2">
+                <DialogHeader className="sr-only">
+                  <DialogTitle>{project.name}</DialogTitle>
+                  <DialogDescription>Full size project image</DialogDescription>
+                </DialogHeader>
+                <img
+                  src={project.imageUrl}
+                  alt={project.name}
+                  className="w-full h-auto rounded-md"
+                />
+              </DialogContent>
+            </Dialog>
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
             No image
@@ -475,7 +503,7 @@ function AddProjectModal({
           <Input
             id="add-imageUrl"
             name="imageUrl"
-            type="url"
+            type="text"
             placeholder="https://..."
           />
           <p className="text-xs text-muted-foreground">16:9 project snapshot.</p>
@@ -629,7 +657,7 @@ function EditProjectModal({
           <Input
             id="edit-imageUrl"
             name="imageUrl"
-            type="url"
+            type="text"
             defaultValue={project.imageUrl}
             placeholder="https://..."
           />

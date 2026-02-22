@@ -205,8 +205,8 @@ function ProjectCard({
   }
 
   return (
-    <Card className="min-w-0 h-full flex flex-col pt-0">
-      <div className="w-full aspect-video overflow-hidden rounded-t-xl shrink-0 bg-muted">
+    <Card className="min-w-0 h-full flex flex-col">
+      <div className="mx-6 aspect-video overflow-hidden rounded-xl shrink-0 bg-muted">
         {project.imageUrl ? (
           <>
             <button

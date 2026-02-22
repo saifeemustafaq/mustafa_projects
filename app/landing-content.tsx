@@ -67,6 +67,8 @@ import {
   updateSiteLinks,
   type UpdateSiteLinksResult,
 } from "@/app/actions/site-links";
+import { detectPrdUrlType } from "@/lib/prd-utils";
+import { PRDViewerDialog } from "@/components/prd-viewer-dialog";
 
 type SiteLinks = { linkedinUrl: string; githubUrl: string };
 
@@ -114,26 +116,44 @@ function TruncatedDescription({
 }
 
 function ProjectLinkButtons({ project }: { project: Project }) {
+  const [prdViewerOpen, setPrdViewerOpen] = useState(false);
+
+  const prdIsInline =
+    project.prdEnabled &&
+    !!project.prdUrl &&
+    detectPrdUrlType(project.prdUrl) !== "external";
+
   return (
     <>
       <Button
         variant="outline"
         size="sm"
+        className="min-w-18"
         disabled={!project.prdEnabled || !project.prdUrl}
-        asChild={project.prdEnabled && !!project.prdUrl}
+        asChild={project.prdEnabled && !!project.prdUrl && !prdIsInline}
+        onClick={prdIsInline ? () => setPrdViewerOpen(true) : undefined}
       >
-        {project.prdEnabled && project.prdUrl ? (
+        {project.prdEnabled && project.prdUrl && !prdIsInline ? (
           <a href={project.prdUrl} target="_blank" rel="noopener noreferrer" aria-label="Open PRD">
             <FileText className="size-4" />
             PRD
           </a>
         ) : (
-          <span><FileText className="size-4" /> PRD</span>
+          <span className="inline-flex items-center gap-1.5"><FileText className="size-4" /> PRD</span>
         )}
       </Button>
+      {prdIsInline && (
+        <PRDViewerDialog
+          open={prdViewerOpen}
+          onOpenChange={setPrdViewerOpen}
+          url={project.prdUrl}
+          projectName={project.name}
+        />
+      )}
       <Button
         variant="outline"
         size="sm"
+        className="min-w-18"
         disabled={!project.pptEnabled || !project.pptUrl}
         asChild={project.pptEnabled && !!project.pptUrl}
       >
@@ -143,12 +163,13 @@ function ProjectLinkButtons({ project }: { project: Project }) {
             PPT
           </a>
         ) : (
-          <span><Presentation className="size-4" /> PPT</span>
+          <span className="inline-flex items-center gap-1.5"><Presentation className="size-4" /> PPT</span>
         )}
       </Button>
       <Button
         variant="outline"
         size="sm"
+        className="min-w-18"
         disabled={!project.githubEnabled || !project.githubUrl}
         asChild={project.githubEnabled && !!project.githubUrl}
       >
@@ -158,12 +179,13 @@ function ProjectLinkButtons({ project }: { project: Project }) {
             GitHub
           </a>
         ) : (
-          <span><Github className="size-4" /> GitHub</span>
+          <span className="inline-flex items-center gap-1.5"><Github className="size-4" /> GitHub</span>
         )}
       </Button>
       <Button
         variant="outline"
         size="sm"
+        className="min-w-18"
         disabled={!project.demoEnabled || !project.demoUrl}
         asChild={project.demoEnabled && !!project.demoUrl}
       >
@@ -173,7 +195,7 @@ function ProjectLinkButtons({ project }: { project: Project }) {
             Demo
           </a>
         ) : (
-          <span><ExternalLink className="size-4" /> Demo</span>
+          <span className="inline-flex items-center gap-1.5"><ExternalLink className="size-4" /> Demo</span>
         )}
       </Button>
     </>

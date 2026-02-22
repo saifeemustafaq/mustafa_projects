@@ -5,6 +5,7 @@ const projectSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
+    imageUrl: { type: String, default: "" },
     prdUrl: { type: String, default: "" },
     pptUrl: { type: String, default: "" },
     githubUrl: { type: String, default: "" },
@@ -31,6 +32,7 @@ export type Project = {
   id: string;
   name: string;
   description: string;
+  imageUrl: string;
   prdUrl: string;
   pptUrl: string;
   githubUrl: string;
@@ -49,6 +51,7 @@ export async function getProjects(): Promise<Project[]> {
     id: String(d._id),
     name: d.name,
     description: d.description,
+    imageUrl: d.imageUrl ?? "",
     prdUrl: d.prdUrl ?? "",
     pptUrl: d.pptUrl ?? "",
     githubUrl: d.githubUrl ?? "",
@@ -64,6 +67,7 @@ export async function getProjects(): Promise<Project[]> {
 const DUMMY_PROJECTS: Array<{
   name: string;
   description: string;
+  imageUrl: string;
   prdUrl: string;
   pptUrl: string;
   githubUrl: string;
@@ -73,6 +77,7 @@ const DUMMY_PROJECTS: Array<{
     name: "AI Tax Assistant",
     description:
       "An AI-powered assistant that helps users understand tax deductions and file returns with confidence.",
+    imageUrl: "",
     prdUrl: "https://example.com/prd/tax-assistant",
     pptUrl: "https://example.com/ppt/tax-assistant",
     githubUrl: "https://github.com/example/ai-tax-assistant",
@@ -82,6 +87,7 @@ const DUMMY_PROJECTS: Array<{
     name: "Document Summarizer",
     description:
       "Summarizes long documents and PDFs using LLMs. Supports multiple languages and export formats.",
+    imageUrl: "",
     prdUrl: "https://example.com/prd/doc-summarizer",
     pptUrl: "https://example.com/ppt/doc-summarizer",
     githubUrl: "https://github.com/example/doc-summarizer",
@@ -91,6 +97,7 @@ const DUMMY_PROJECTS: Array<{
     name: "Code Review Bot",
     description:
       "Automated code review comments and suggestions powered by GPT. Integrates with GitHub and GitLab.",
+    imageUrl: "",
     prdUrl: "https://example.com/prd/code-review-bot",
     pptUrl: "https://example.com/ppt/code-review-bot",
     githubUrl: "https://github.com/example/code-review-bot",
@@ -100,6 +107,7 @@ const DUMMY_PROJECTS: Array<{
     name: "Meeting Notes Generator",
     description:
       "Turns meeting transcripts into structured notes, action items, and follow-up emails.",
+    imageUrl: "",
     prdUrl: "https://example.com/prd/meeting-notes",
     pptUrl: "https://example.com/ppt/meeting-notes",
     githubUrl: "https://github.com/example/meeting-notes",
@@ -117,6 +125,7 @@ export async function seedDummyProjects(): Promise<void> {
 export type CreateProjectInput = {
   name: string;
   description: string;
+  imageUrl?: string;
   prdUrl?: string;
   pptUrl?: string;
   githubUrl?: string;
@@ -134,6 +143,7 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
   const doc = await ProjectModel.create({
     name: input.name.trim(),
     description: input.description.trim(),
+    imageUrl: input.imageUrl?.trim() ?? "",
     prdUrl: input.prdUrl?.trim() ?? "",
     pptUrl: input.pptUrl?.trim() ?? "",
     githubUrl: input.githubUrl?.trim() ?? "",
@@ -148,6 +158,7 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
     id: String(doc._id),
     name: doc.name,
     description: doc.description,
+    imageUrl: doc.imageUrl ?? "",
     prdUrl: doc.prdUrl ?? "",
     pptUrl: doc.pptUrl ?? "",
     githubUrl: doc.githubUrl ?? "",
@@ -171,6 +182,7 @@ export async function updateProject(
     {
       name: input.name.trim(),
       description: input.description.trim(),
+      imageUrl: input.imageUrl?.trim() ?? "",
       prdUrl: input.prdUrl?.trim() ?? "",
       pptUrl: input.pptUrl?.trim() ?? "",
       githubUrl: input.githubUrl?.trim() ?? "",
@@ -187,6 +199,7 @@ export async function updateProject(
     id: String(doc._id),
     name: doc.name,
     description: doc.description,
+    imageUrl: doc.imageUrl ?? "",
     prdUrl: doc.prdUrl ?? "",
     pptUrl: doc.pptUrl ?? "",
     githubUrl: doc.githubUrl ?? "",

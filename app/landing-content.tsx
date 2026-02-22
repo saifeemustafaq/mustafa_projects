@@ -205,6 +205,20 @@ function ProjectCard({
 
   return (
     <Card className="min-w-0 h-full flex flex-col">
+      <div className="w-full aspect-video overflow-hidden rounded-t-xl shrink-0 bg-muted">
+        {project.imageUrl ? (
+          <img
+            src={project.imageUrl}
+            alt=""
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+            No image
+          </div>
+        )}
+      </div>
       <CardHeader className="shrink-0">
         <CardTitle>{project.name}</CardTitle>
         <div className="max-h-28 overflow-y-auto overflow-x-hidden min-w-0">
@@ -455,6 +469,18 @@ function AddProjectModal({
           />
         </div>
         <div className="space-y-2">
+          <label htmlFor="add-imageUrl" className="text-sm font-medium">
+            Image URL (optional)
+          </label>
+          <Input
+            id="add-imageUrl"
+            name="imageUrl"
+            type="url"
+            placeholder="https://..."
+          />
+          <p className="text-xs text-muted-foreground">16:9 project snapshot.</p>
+        </div>
+        <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <label htmlFor="add-prd" className="text-sm font-medium">
               PRD URL (optional)
@@ -595,6 +621,19 @@ function EditProjectModal({
             rows={3}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50"
           />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="edit-imageUrl" className="text-sm font-medium">
+            Image URL (optional)
+          </label>
+          <Input
+            id="edit-imageUrl"
+            name="imageUrl"
+            type="url"
+            defaultValue={project.imageUrl}
+            placeholder="https://..."
+          />
+          <p className="text-xs text-muted-foreground">16:9 project snapshot.</p>
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">

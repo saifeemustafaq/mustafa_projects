@@ -87,6 +87,7 @@ export async function createProject(
   const input: CreateProjectInput = {
     name,
     description,
+    imageUrl: (formData.get("imageUrl") as string)?.trim() || undefined,
     prdUrl: (formData.get("prdUrl") as string)?.trim() || undefined,
     pptUrl: (formData.get("pptUrl") as string)?.trim() || undefined,
     githubUrl: (formData.get("githubUrl") as string)?.trim() || undefined,
@@ -129,6 +130,7 @@ export async function updateProject(
   const input: CreateProjectInput = {
     name,
     description,
+    imageUrl: (formData.get("imageUrl") as string)?.trim() || undefined,
     prdUrl: (formData.get("prdUrl") as string)?.trim() || undefined,
     pptUrl: (formData.get("pptUrl") as string)?.trim() || undefined,
     githubUrl: (formData.get("githubUrl") as string)?.trim() || undefined,

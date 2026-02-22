@@ -228,7 +228,7 @@ function ProjectCard({
 
   return (
     <Card className="min-w-0 h-full flex flex-col">
-      <div className="mx-6 aspect-video overflow-hidden rounded-xl shrink-0 bg-muted">
+      <div className="mx-6 aspect-video overflow-hidden rounded-md shrink-0 bg-muted">
         {project.imageUrl ? (
           <>
             <button
@@ -272,7 +272,7 @@ function ProjectCard({
       <CardHeader className="shrink-0">
         <CardTitle>{project.name}</CardTitle>
         <div className="max-h-28 overflow-y-auto overflow-x-hidden min-w-0">
-          <CardDescription className="max-w-full min-w-0 break-all">
+          <CardDescription className="max-w-full min-w-0 wrap-break-word">
             <TruncatedDescription
               description={project.description}
               title={project.name}
@@ -354,7 +354,7 @@ function ProjectListRow({
         {dragHandle}
         <div className="min-w-0">
           <p className="font-semibold leading-none">{project.name}</p>
-          <p className="text-muted-foreground text-sm mt-1 max-w-full min-w-0 break-all overflow-hidden">
+          <p className="text-muted-foreground text-sm mt-1 max-w-full min-w-0 wrap-break-word overflow-hidden">
             <TruncatedDescription
               description={project.description}
               title={project.name}
@@ -1121,6 +1121,46 @@ export function LandingContent({
             </Dialog>
           </div>
         </header>
+
+        <div className="flex flex-wrap items-start gap-8 border-y border-border py-5">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Work Experience
+            </span>
+            <div className="flex items-center gap-3">
+              {[
+                { domain: "microsoft.com", alt: "Microsoft" },
+                { domain: "aws.amazon.com", alt: "AWS" },
+                { domain: "intuit.com", alt: "Intuit" },
+                { domain: "harness.io", alt: "Harness" },
+              ].map(({ domain, alt }) => (
+                <img
+                  key={domain}
+                  src={`https://img.logo.dev/${domain}?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png`}
+                  alt={alt}
+                  title={alt}
+                  className="size-8 rounded-md object-contain"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="h-10 w-px bg-border hidden sm:block self-center" />
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Education
+            </span>
+            <div className="flex items-center gap-3">
+              <img
+                src="https://img.logo.dev/cmu.edu?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png"
+                alt="Carnegie Mellon University"
+                title="Carnegie Mellon University"
+                className="size-8 rounded-md object-contain"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="w-full min-w-0">

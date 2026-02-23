@@ -97,99 +97,78 @@ export function LandingContent({
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-4xl px-6 py-8 space-y-8">
         <header className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="text-lg font-semibold text-foreground hover:text-foreground/90 transition-colors"
-              >
-                Mustafa&apos;s AI projects
-              </Link>
-              {isEditMode && (
-                <span
-                  className="font-bold uppercase text-red-600 dark:text-red-400"
-                  aria-label="Edit mode is on"
-                >
-                  EDIT MODE
-                </span>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {isEditMode ? (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSiteLinksEditOpen(true)}
-                    aria-label="Edit LinkedIn and GitHub links"
-                  >
-                    <Linkedin className="size-4" />
-                    LinkedIn
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSiteLinksEditOpen(true)}
-                    aria-label="Edit LinkedIn and GitHub links"
-                  >
-                    <Github className="size-4" />
-                    Github
-                  </Button>
-                  <Dialog open={siteLinksEditOpen} onOpenChange={setSiteLinksEditOpen}>
-                    <DialogContent>
-                      <EditSiteLinksModal
-                        siteLinks={siteLinks}
-                        onOpenChange={setSiteLinksEditOpen}
-                        onSaved={refresh}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </>
-              ) : (
-                <>
-                  {siteLinks.linkedinUrl ? (
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={siteLinks.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="LinkedIn profile"
-                      >
-                        <Linkedin className="size-4" />
-                        LinkedIn
-                      </a>
-                    </Button>
-                  ) : (
-                    <Button variant="outline" size="sm" disabled>
-                      <Linkedin className="size-4" />
-                      LinkedIn
-                    </Button>
-                  )}
-                  {siteLinks.githubUrl ? (
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={siteLinks.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub profile"
-                      >
-                        <Github className="size-4" />
-                        Github
-                      </a>
-                    </Button>
-                  ) : (
-                    <Button variant="outline" size="sm" disabled>
-                      <Github className="size-4" />
-                      Github
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              href="/"
+              className="text-lg font-semibold text-foreground hover:text-foreground/90 transition-colors"
+            >
+              Mustafa&apos;s AI projects
+            </Link>
             {isEditMode && (
+              <span
+                className="font-bold uppercase text-red-600 dark:text-red-400"
+                aria-label="Edit mode is on"
+              >
+                EDIT MODE
+              </span>
+            )}
+            <div className="h-5 w-px bg-border hidden sm:block" />
+            <div className="flex items-center gap-2">
+              {[
+                { domain: "microsoft.com", alt: "Microsoft" },
+                { domain: "aws.amazon.com", alt: "AWS" },
+                { domain: "intuit.com", alt: "Intuit" },
+                { domain: "harness.io", alt: "Harness" },
+              ].map(({ domain, alt }) => (
+                <img
+                  key={domain}
+                  src={`https://img.logo.dev/${domain}?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png`}
+                  alt={alt}
+                  title={alt}
+                  className="size-6 rounded object-contain"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+            <div className="h-5 w-px bg-border hidden sm:block" />
+            <img
+              src="https://img.logo.dev/cmu.edu?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png"
+              alt="Carnegie Mellon University"
+              title="Carnegie Mellon University"
+              className="size-6 rounded object-contain"
+              loading="lazy"
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {isEditMode ? (
               <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSiteLinksEditOpen(true)}
+                  aria-label="Edit LinkedIn and GitHub links"
+                >
+                  <Linkedin className="size-4" />
+                  LinkedIn
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSiteLinksEditOpen(true)}
+                  aria-label="Edit LinkedIn and GitHub links"
+                >
+                  <Github className="size-4" />
+                  Github
+                </Button>
+                <Dialog open={siteLinksEditOpen} onOpenChange={setSiteLinksEditOpen}>
+                  <DialogContent>
+                    <EditSiteLinksModal
+                      siteLinks={siteLinks}
+                      onOpenChange={setSiteLinksEditOpen}
+                      onSaved={refresh}
+                    />
+                  </DialogContent>
+                </Dialog>
                 <Button
                   variant="outline"
                   size="sm"
@@ -216,6 +195,45 @@ export function LandingContent({
                   </DialogContent>
                 </Dialog>
               </>
+            ) : (
+              <>
+                {siteLinks.linkedinUrl ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href={siteLinks.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn profile"
+                    >
+                      <Linkedin className="size-4" />
+                      LinkedIn
+                    </a>
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" disabled>
+                    <Linkedin className="size-4" />
+                    LinkedIn
+                  </Button>
+                )}
+                {siteLinks.githubUrl ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href={siteLinks.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub profile"
+                    >
+                      <Github className="size-4" />
+                      Github
+                    </a>
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" disabled>
+                    <Github className="size-4" />
+                    Github
+                  </Button>
+                )}
+              </>
             )}
             <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
               <DialogTrigger asChild>
@@ -236,46 +254,6 @@ export function LandingContent({
             </Dialog>
           </div>
         </header>
-
-        <div className="flex flex-wrap items-start gap-8 border-y border-border py-5">
-          <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Work Experience
-            </span>
-            <div className="flex items-center gap-3">
-              {[
-                { domain: "microsoft.com", alt: "Microsoft" },
-                { domain: "aws.amazon.com", alt: "AWS" },
-                { domain: "intuit.com", alt: "Intuit" },
-                { domain: "harness.io", alt: "Harness" },
-              ].map(({ domain, alt }) => (
-                <img
-                  key={domain}
-                  src={`https://img.logo.dev/${domain}?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png`}
-                  alt={alt}
-                  title={alt}
-                  className="size-8 rounded-md object-contain"
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          </div>
-          <div className="h-10 w-px bg-border hidden sm:block self-center" />
-          <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Education
-            </span>
-            <div className="flex items-center gap-3">
-              <img
-                src="https://img.logo.dev/cmu.edu?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png"
-                alt="Carnegie Mellon University"
-                title="Carnegie Mellon University"
-                className="size-8 rounded-md object-contain"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="w-full min-w-0">

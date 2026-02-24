@@ -129,7 +129,6 @@ export async function updateProject(
 
   const rawImageUrl = formData.get("imageUrl");
   const imageUrl = (rawImageUrl as string)?.trim() ?? "";
-  console.log("[updateProject] projectId:", projectId, "| imageUrl raw:", JSON.stringify(rawImageUrl), "| imageUrl resolved:", JSON.stringify(imageUrl));
 
   const input: CreateProjectInput = {
     name,
@@ -147,7 +146,6 @@ export async function updateProject(
 
   try {
     const updated = await updateProjectDb(projectId, input);
-    console.log("[updateProject] result:", updated ? "saved" : "not found", "| imageUrl in input:", JSON.stringify(input.imageUrl));
     return updated ? { success: true } : { success: false, error: "Project not found." };
   } catch (err) {
     console.error(err);

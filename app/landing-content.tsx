@@ -102,7 +102,7 @@ export function LandingContent({
               href="/"
               className="text-lg font-semibold text-foreground hover:text-foreground/90 transition-colors"
             >
-              Mustafa&apos;s AI projects
+              Mustafa&apos;s Portfolio
             </Link>
             {isEditMode && (
               <span

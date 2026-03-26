@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mustafa Projects
 
-## Getting Started
+A portfolio app for showcasing projects. Built with Next.js, React, Tailwind CSS, and MongoDB. Hosted on Netlify.
 
-First, run the development server:
+## Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Copy the environment template and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | Yes | MongoDB connection string |
+| `INITIAL_ADMIN_PASSWORD` | Once | Sets the admin password on first run. Remove after. |
+| `AUTH_SECRET` | Production | Secret for signing session cookies |
+| `GITHUB_TOKEN` | No | GitHub PAT with `repo` scope for image uploads |
+| `GITHUB_OWNER` | No | GitHub repo owner (e.g. `saifeemustafaq`) |
+| `GITHUB_REPO` | No | GitHub repo name (e.g. `mustafa_projects`) |
+
+3. Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Resetting the admin password
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Option 1: pass as argument
+npm run reset-password "YourNewPassword123"
 
-## Learn More
+# Option 2: use env var (keeps password out of shell history)
+NEW_PASSWORD=YourNewPassword123 node scripts/reset-password.js
+```
 
-To learn more about Next.js, take a look at the following resources:
+Requires `MONGODB_URI` in `.env.local`. See [scripts/README.md](scripts/README.md) for details.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Image uploads
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+When logged in, the Add/Edit project modals let you either paste an image URL or upload an image directly to the GitHub repo. Uploading creates a PR, merges it, and returns the raw URL automatically.
 
-## Deploy on Vercel
+Requires `GITHUB_TOKEN`, `GITHUB_OWNER`, and `GITHUB_REPO` in `.env.local`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Hosted on [Netlify](https://www.netlify.com). Set the same environment variables from `.env.example` in your Netlify site settings under **Site configuration > Environment variables**.

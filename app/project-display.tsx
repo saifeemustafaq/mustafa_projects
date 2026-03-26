@@ -258,7 +258,7 @@ export function ProjectCard({
               <Pencil className="size-4" />
             </Button>
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
-              <DialogContent>
+              <DialogContent className="max-w-3xl w-[90vw]">
                 <EditProjectModal
                   project={project}
                   onOpenChange={setEditOpen}
@@ -338,7 +338,7 @@ export function ProjectListRow({
               <Pencil className="size-4" />
             </Button>
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
-              <DialogContent>
+              <DialogContent className="max-w-3xl w-[90vw]">
                 <EditProjectModal
                   project={project}
                   onOpenChange={setEditOpen}

@@ -187,7 +187,7 @@ export function LandingContent({
                       Add project
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-3xl w-[90vw]">
                     <AddProjectModal
                       onOpenChange={setAddProjectOpen}
                       onAdded={refresh}

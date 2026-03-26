@@ -30,12 +30,15 @@ import {
   LayoutGrid,
   Linkedin,
   Github,
+  Mail,
   ArrowUpNarrowWide,
   ArrowDownNarrowWide,
   ListOrdered,
 } from "lucide-react";
 import type { Project } from "@/lib/models/Project";
 import type { SiteLinks } from "@/lib/models/SiteLinks";
+import type { AboutInfo } from "@/lib/models/AboutInfo";
+import { AboutSection } from "@/app/about-section";
 import { logout } from "@/app/actions/auth";
 import { reorderProjects } from "@/app/actions/projects";
 import {
@@ -45,20 +48,25 @@ import {
 } from "@/app/project-display";
 import { AddProjectModal } from "@/app/project-form-modals";
 import { EditSiteLinksModal, SettingsModal } from "@/app/settings-modals";
+import { ContactDialog } from "@/app/contact-dialog";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function LandingContent({
   initialProjects,
   initialLoggedIn,
   initialSiteLinks,
+  initialAboutInfo,
 }: {
   initialProjects: Project[];
   initialLoggedIn: boolean;
   initialSiteLinks: SiteLinks;
+  initialAboutInfo: AboutInfo;
 }) {
   const [query, setQuery] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
   const [siteLinksEditOpen, setSiteLinksEditOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [siteLinks, setSiteLinks] = useState<SiteLinks>(initialSiteLinks);
   const [viewMode, setViewMode] = useState<"list" | "cards">("cards");
   const [sortBy, setSortBy] = useState<"default" | "asc" | "desc">("default");
@@ -94,7 +102,7 @@ export function LandingContent({
   const isEditMode = initialLoggedIn;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground pb-20 sm:pb-0">
       <div className="mx-auto max-w-4xl px-6 py-8 space-y-8">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -125,7 +133,7 @@ export function LandingContent({
                   src={`https://img.logo.dev/${domain}?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png`}
                   alt={alt}
                   title={alt}
-                  className="size-6 rounded object-contain"
+                  className="size-6 rounded object-contain dark:bg-white dark:p-0.5"
                   loading="lazy"
                 />
               ))}
@@ -135,36 +143,57 @@ export function LandingContent({
               src="https://img.logo.dev/cmu.edu?token=pk_TpV6cBsNRw6eLkvygVgOkQ&size=64&format=png"
               alt="Carnegie Mellon University"
               title="Carnegie Mellon University"
-              className="size-6 rounded object-contain"
+              className="size-6 rounded object-contain dark:bg-white dark:p-0.5"
               loading="lazy"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {isEditMode ? (
               <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSiteLinksEditOpen(true)}
-                  aria-label="Edit LinkedIn and GitHub links"
-                >
-                  <Linkedin className="size-4" />
-                  LinkedIn
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSiteLinksEditOpen(true)}
-                  aria-label="Edit LinkedIn and GitHub links"
-                >
-                  <Github className="size-4" />
-                  Github
-                </Button>
+                <div className="hidden sm:flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSiteLinksEditOpen(true)}
+                    aria-label="Edit LinkedIn and GitHub links"
+                  >
+                    <Linkedin className="size-4" />
+                    LinkedIn
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSiteLinksEditOpen(true)}
+                    aria-label="Edit LinkedIn and GitHub links"
+                  >
+                    <Github className="size-4" />
+                    Github
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setContactOpen(true)}
+                    aria-label="Edit contact info"
+                  >
+                    <Mail className="size-4" />
+                    Contact
+                  </Button>
+                </div>
                 <Dialog open={siteLinksEditOpen} onOpenChange={setSiteLinksEditOpen}>
                   <DialogContent>
                     <EditSiteLinksModal
                       siteLinks={siteLinks}
                       onOpenChange={setSiteLinksEditOpen}
+                      onSaved={refresh}
+                    />
+                  </DialogContent>
+                </Dialog>
+                <Dialog open={contactOpen} onOpenChange={setContactOpen}>
+                  <DialogContent>
+                    <ContactDialog
+                      siteLinks={siteLinks}
+                      isEditMode={true}
+                      onOpenChange={setContactOpen}
                       onSaved={refresh}
                     />
                   </DialogContent>
@@ -197,44 +226,66 @@ export function LandingContent({
               </>
             ) : (
               <>
-                {siteLinks.linkedinUrl ? (
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href={siteLinks.linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="LinkedIn profile"
-                    >
+                <div className="hidden sm:flex items-center gap-2">
+                  {siteLinks.linkedinUrl ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={siteLinks.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn profile"
+                      >
+                        <Linkedin className="size-4" />
+                        LinkedIn
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" disabled>
                       <Linkedin className="size-4" />
                       LinkedIn
-                    </a>
-                  </Button>
-                ) : (
-                  <Button variant="outline" size="sm" disabled>
-                    <Linkedin className="size-4" />
-                    LinkedIn
-                  </Button>
-                )}
-                {siteLinks.githubUrl ? (
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href={siteLinks.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="GitHub profile"
-                    >
+                    </Button>
+                  )}
+                  {siteLinks.githubUrl ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={siteLinks.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="GitHub profile"
+                      >
+                        <Github className="size-4" />
+                        Github
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" disabled>
                       <Github className="size-4" />
                       Github
-                    </a>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setContactOpen(true)}
+                    aria-label="View contact info"
+                  >
+                    <Mail className="size-4" />
+                    Contact
                   </Button>
-                ) : (
-                  <Button variant="outline" size="sm" disabled>
-                    <Github className="size-4" />
-                    Github
-                  </Button>
-                )}
+                </div>
+                <Dialog open={contactOpen} onOpenChange={setContactOpen}>
+                  <DialogContent>
+                    <ContactDialog
+                      siteLinks={siteLinks}
+                      isEditMode={false}
+                      onOpenChange={setContactOpen}
+                      onSaved={refresh}
+                    />
+                  </DialogContent>
+                </Dialog>
               </>
             )}
+            <ThemeToggle />
             <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
               <DialogTrigger asChild>
                 <button
@@ -254,6 +305,8 @@ export function LandingContent({
             </Dialog>
           </div>
         </header>
+
+        <AboutSection initialAboutInfo={initialAboutInfo} isEditMode={isEditMode} />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="w-full min-w-0">
@@ -427,6 +480,81 @@ export function LandingContent({
             )}
           </section>
         )}
+      </div>
+
+      {/* Fixed mobile bottom bar — hidden on sm+ */}
+      <div className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 p-3 sm:hidden">
+        <div className="flex gap-2">
+          {isEditMode ? (
+            <>
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="sm"
+                onClick={() => setSiteLinksEditOpen(true)}
+              >
+                <Linkedin className="size-4" />
+                LinkedIn
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="sm"
+                onClick={() => setSiteLinksEditOpen(true)}
+              >
+                <Github className="size-4" />
+                Github
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="sm"
+                onClick={() => setContactOpen(true)}
+              >
+                <Mail className="size-4" />
+                Contact
+              </Button>
+            </>
+          ) : (
+            <>
+              {siteLinks.linkedinUrl ? (
+                <Button variant="outline" className="flex-1" size="sm" asChild>
+                  <a href={siteLinks.linkedinUrl} target="_blank" rel="noopener noreferrer">
+                    <Linkedin className="size-4" />
+                    LinkedIn
+                  </a>
+                </Button>
+              ) : (
+                <Button variant="outline" className="flex-1" size="sm" disabled>
+                  <Linkedin className="size-4" />
+                  LinkedIn
+                </Button>
+              )}
+              {siteLinks.githubUrl ? (
+                <Button variant="outline" className="flex-1" size="sm" asChild>
+                  <a href={siteLinks.githubUrl} target="_blank" rel="noopener noreferrer">
+                    <Github className="size-4" />
+                    Github
+                  </a>
+                </Button>
+              ) : (
+                <Button variant="outline" className="flex-1" size="sm" disabled>
+                  <Github className="size-4" />
+                  Github
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                className="flex-1"
+                size="sm"
+                onClick={() => setContactOpen(true)}
+              >
+                <Mail className="size-4" />
+                Contact
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

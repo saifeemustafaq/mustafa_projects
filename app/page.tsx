@@ -1,10 +1,11 @@
 import { getProjects, seedDummyProjects } from "@/lib/models/Project";
 import { getSiteLinks } from "@/lib/models/SiteLinks";
+import { getAboutInfo } from "@/lib/models/AboutInfo";
 import { getSession } from "@/lib/auth";
 import { LandingContent } from "./landing-content";
 
 export default async function Home() {
-  const [session, projects, siteLinks] = await Promise.all([
+  const [session, projects, siteLinks, aboutInfo] = await Promise.all([
     getSession(),
     (async () => {
       let p = await getProjects();
@@ -15,6 +16,7 @@ export default async function Home() {
       return p;
     })(),
     getSiteLinks(),
+    getAboutInfo(),
   ]);
 
   return (
@@ -22,6 +24,7 @@ export default async function Home() {
       initialProjects={projects}
       initialLoggedIn={!!session}
       initialSiteLinks={siteLinks}
+      initialAboutInfo={aboutInfo}
     />
   );
 }

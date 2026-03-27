@@ -9,7 +9,10 @@ export type UpdateSiteLinksResult =
 
 export async function updateSiteLinks(
   linkedinUrl: string,
-  githubUrl: string
+  githubUrl: string,
+  contactEmail: string,
+  contactPhone: string,
+  contactLocation: string
 ): Promise<UpdateSiteLinksResult> {
   const session = await getSession();
   if (!session) {
@@ -20,6 +23,9 @@ export async function updateSiteLinks(
     await updateSiteLinksDb({
       linkedinUrl: linkedinUrl.trim(),
       githubUrl: githubUrl.trim(),
+      contactEmail: contactEmail.trim(),
+      contactPhone: contactPhone.trim(),
+      contactLocation: contactLocation.trim(),
     });
     return { success: true };
   } catch (err) {

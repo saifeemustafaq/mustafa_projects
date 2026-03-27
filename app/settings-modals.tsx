@@ -29,12 +29,15 @@ export function EditSiteLinksModal({
   const [error, setError] = useState<string | null>(null);
   const [linkedinUrl, setLinkedinUrl] = useState(siteLinks.linkedinUrl);
   const [githubUrl, setGithubUrl] = useState(siteLinks.githubUrl);
+  const [contactEmail, setContactEmail] = useState(siteLinks.contactEmail);
+  const [contactPhone, setContactPhone] = useState(siteLinks.contactPhone);
+  const [contactLocation, setContactLocation] = useState(siteLinks.contactLocation);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setPending(true);
-    const result: UpdateSiteLinksResult = await updateSiteLinks(linkedinUrl, githubUrl);
+    const result: UpdateSiteLinksResult = await updateSiteLinks(linkedinUrl, githubUrl, contactEmail, contactPhone, contactLocation);
     setPending(false);
     if (result.success) {
       onSaved();
@@ -49,7 +52,7 @@ export function EditSiteLinksModal({
       <DialogHeader>
         <DialogTitle>Edit profile links</DialogTitle>
         <DialogDescription>
-          Set your LinkedIn and GitHub profile URLs. They appear below the site title.
+          Set your LinkedIn, GitHub, and contact info.
         </DialogDescription>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4 py-4">
@@ -75,6 +78,42 @@ export function EditSiteLinksModal({
             placeholder="https://github.com/..."
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="edit-contact-email" className="text-sm font-medium">
+            Contact Email
+          </label>
+          <Input
+            id="edit-contact-email"
+            type="email"
+            placeholder="you@example.com"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="edit-contact-phone" className="text-sm font-medium">
+            Contact Phone
+          </label>
+          <Input
+            id="edit-contact-phone"
+            type="tel"
+            placeholder="+1 (555) 000-0000"
+            value={contactPhone}
+            onChange={(e) => setContactPhone(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="edit-contact-location" className="text-sm font-medium">
+            Location
+          </label>
+          <Input
+            id="edit-contact-location"
+            type="text"
+            placeholder="San Francisco, CA"
+            value={contactLocation}
+            onChange={(e) => setContactLocation(e.target.value)}
           />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}

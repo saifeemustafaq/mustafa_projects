@@ -6,6 +6,7 @@ const projectSchema = new mongoose.Schema(
     name: { type: String, required: true },
     description: { type: String, required: true },
     imageUrl: { type: String, default: "" },
+    imageUrls: { type: [String], default: [] },
     prdUrl: { type: String, default: "" },
     pptUrl: { type: String, default: "" },
     githubUrl: { type: String, default: "" },
@@ -33,6 +34,7 @@ export type Project = {
   name: string;
   description: string;
   imageUrl: string;
+  imageUrls: string[];
   prdUrl: string;
   pptUrl: string;
   githubUrl: string;
@@ -44,6 +46,21 @@ export type Project = {
   order: number;
 };
 
+/**
+ * Normalize image URLs for backward compatibility: prefer the imageUrls array,
+ * fall back to the legacy single imageUrl. Returns the array plus the synced
+ * cover (imageUrls[0]) so callers can persist/return both fields in lockstep.
+ */
+function normalizeImages(d: {
+  imageUrls?: string[] | null;
+  imageUrl?: string | null;
+}): { imageUrls: string[]; imageUrl: string } {
+  const imageUrls = (
+    d.imageUrls?.length ? d.imageUrls : d.imageUrl ? [d.imageUrl] : []
+  ).filter(Boolean);
+  return { imageUrls, imageUrl: imageUrls[0] ?? "" };
+}
+
 export async function getProjects(): Promise<Project[]> {
   await connectDb();
   const docs = await ProjectModel.find().sort({ order: 1 }).lean();
@@ -51,7 +68,7 @@ export async function getProjects(): Promise<Project[]> {
     id: String(d._id),
     name: d.name,
     description: d.description,
-    imageUrl: d.imageUrl ?? "",
+    ...normalizeImages(d),
     prdUrl: d.prdUrl ?? "",
     pptUrl: d.pptUrl ?? "",
     githubUrl: d.githubUrl ?? "",
@@ -126,6 +143,7 @@ export type CreateProjectInput = {
   name: string;
   description: string;
   imageUrl?: string;
+  imageUrls?: string[];
   prdUrl?: string;
   pptUrl?: string;
   githubUrl?: string;
@@ -140,10 +158,15 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
   await connectDb();
   const maxOrderDoc = await ProjectModel.find().sort({ order: -1 }).limit(1).lean();
   const nextOrder = (maxOrderDoc[0]?.order ?? -1) + 1;
+  const { imageUrls, imageUrl } = normalizeImages({
+    imageUrls: input.imageUrls,
+    imageUrl: input.imageUrl?.trim(),
+  });
   const doc = await ProjectModel.create({
     name: input.name.trim(),
     description: input.description.trim(),
-    imageUrl: input.imageUrl?.trim() ?? "",
+    imageUrl,
+    imageUrls,
     prdUrl: input.prdUrl?.trim() ?? "",
     pptUrl: input.pptUrl?.trim() ?? "",
     githubUrl: input.githubUrl?.trim() ?? "",
@@ -158,7 +181,7 @@ export async function createProject(input: CreateProjectInput): Promise<Project>
     id: String(doc._id),
     name: doc.name,
     description: doc.description,
-    imageUrl: doc.imageUrl ?? "",
+    ...normalizeImages(doc),
     prdUrl: doc.prdUrl ?? "",
     pptUrl: doc.pptUrl ?? "",
     githubUrl: doc.githubUrl ?? "",
@@ -177,10 +200,15 @@ export async function updateProject(
 ): Promise<Project | null> {
   await connectDb();
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
+  const { imageUrls, imageUrl } = normalizeImages({
+    imageUrls: input.imageUrls,
+    imageUrl: (input.imageUrl ?? "").toString().trim(),
+  });
   const update: Record<string, unknown> = {
     name: input.name.trim(),
     description: input.description.trim(),
-    imageUrl: (input.imageUrl ?? "").toString().trim(),
+    imageUrl,
+    imageUrls,
     prdUrl: input.prdUrl?.trim() ?? "",
     pptUrl: input.pptUrl?.trim() ?? "",
     githubUrl: input.githubUrl?.trim() ?? "",
@@ -200,7 +228,7 @@ export async function updateProject(
     id: String(doc._id),
     name: doc.name,
     description: doc.description,
-    imageUrl: doc.imageUrl ?? "",
+    ...normalizeImages(doc),
     prdUrl: doc.prdUrl ?? "",
     pptUrl: doc.pptUrl ?? "",
     githubUrl: doc.githubUrl ?? "",

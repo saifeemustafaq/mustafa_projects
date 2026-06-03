@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -32,6 +31,7 @@ import type { Project } from "@/lib/models/Project";
 import { deleteProject } from "@/app/actions/projects";
 import { detectPrdUrlType } from "@/lib/prd-utils";
 import { PRDViewerDialog } from "@/components/prd-viewer-dialog";
+import { ProjectImageCarousel } from "@/components/project-image-carousel";
 import { EditProjectModal } from "@/app/project-form-modals";
 
 const MAX_DESCRIPTION_LENGTH = 150;
@@ -177,7 +177,6 @@ export function ProjectCard({
 }) {
   const [deleting, setDeleting] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [imageOpen, setImageOpen] = useState(false);
 
   async function handleDelete() {
     if (!confirm(`Delete "${project.name}"?`)) return;
@@ -191,45 +190,10 @@ export function ProjectCard({
   return (
     <Card className="min-w-0 h-full flex flex-col">
       <div className="mx-6 aspect-video overflow-hidden rounded-md shrink-0 bg-muted">
-        {project.imageUrl ? (
-          <>
-            <button
-              type="button"
-              className="relative w-full h-full group cursor-pointer"
-              onClick={() => setImageOpen(true)}
-              aria-label={`View full image for ${project.name}`}
-            >
-              <img
-                src={project.imageUrl}
-                alt=""
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Click to view image
-                </span>
-              </div>
-            </button>
-            <Dialog open={imageOpen} onOpenChange={setImageOpen}>
-              <DialogContent className="max-w-4xl w-[90vw] p-2">
-                <DialogHeader className="sr-only">
-                  <DialogTitle>{project.name}</DialogTitle>
-                  <DialogDescription>Full size project image</DialogDescription>
-                </DialogHeader>
-                <img
-                  src={project.imageUrl}
-                  alt={project.name}
-                  className="w-full h-auto rounded-md"
-                />
-              </DialogContent>
-            </Dialog>
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-            No image
-          </div>
-        )}
+        <ProjectImageCarousel
+          imageUrls={project.imageUrls}
+          projectName={project.name}
+        />
       </div>
       <CardHeader className="shrink-0">
         <CardTitle>{project.name}</CardTitle>

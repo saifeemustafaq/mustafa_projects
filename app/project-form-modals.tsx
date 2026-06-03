@@ -73,7 +73,7 @@ export function AddProjectModal({
 }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -85,7 +85,7 @@ export function AddProjectModal({
     if (result.success) {
       onAdded();
       onOpenChange(false);
-      setImageUrl("");
+      setImageUrls([]);
       (e.target as HTMLFormElement).reset();
     } else {
       setError(result.error);
@@ -127,8 +127,8 @@ export function AddProjectModal({
                 className={TEXTAREA_CLASS}
               />
             </div>
-            <input type="hidden" name="imageUrl" value={imageUrl} />
-            <ImageUploader onValueChange={setImageUrl} />
+            <input type="hidden" name="imageUrls" value={JSON.stringify(imageUrls)} />
+            <ImageUploader onValuesChange={setImageUrls} />
           </div>
           <div className="space-y-4">
             <ProjectUrlField idPrefix="add" urlName="prdUrl" label="PRD URL" />
@@ -157,7 +157,7 @@ export function EditProjectModal({
 }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState(project.imageUrl);
+  const [imageUrls, setImageUrls] = useState<string[]>(project.imageUrls);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -210,11 +210,11 @@ export function EditProjectModal({
                 className={TEXTAREA_CLASS}
               />
             </div>
-            <input type="hidden" name="imageUrl" value={imageUrl} />
+            <input type="hidden" name="imageUrls" value={JSON.stringify(imageUrls)} />
             <ImageUploader
-              defaultUrl={project.imageUrl}
+              defaultUrls={project.imageUrls}
               projectName={project.name}
-              onValueChange={setImageUrl}
+              onValuesChange={setImageUrls}
             />
           </div>
           <div className="space-y-4">

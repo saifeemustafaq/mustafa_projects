@@ -80,9 +80,9 @@ function EditBioDialog({
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4 py-4">
         <ImageUploader
-          defaultUrl={photo}
+          defaultUrls={photo ? [photo] : []}
           projectName="profile"
-          onValueChange={setPhoto}
+          onValuesChange={(urls) => setPhoto(urls[0] ?? "")}
         />
         <div className="space-y-2">
           <label className="text-sm font-medium">Bio</label>

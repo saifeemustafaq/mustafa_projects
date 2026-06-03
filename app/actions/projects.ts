@@ -26,6 +26,28 @@ export type ReorderProjectResult =
   | { success: true }
   | { success: false; error: string };
 
+/**
+ * Read the gallery `imageUrls` JSON from formData, trimming and dropping empties.
+ * Falls back to the legacy single `imageUrl` field if the JSON is missing/invalid.
+ */
+function parseImageUrls(formData: FormData): string[] {
+  const raw = formData.get("imageUrls");
+  if (typeof raw === "string" && raw.trim()) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((u) => (typeof u === "string" ? u.trim() : ""))
+          .filter(Boolean);
+      }
+    } catch {
+      // fall through to legacy single-url handling
+    }
+  }
+  const legacy = (formData.get("imageUrl") as string)?.trim();
+  return legacy ? [legacy] : [];
+}
+
 export async function reorderProject(
   projectId: string,
   direction: "up" | "down"
@@ -84,10 +106,13 @@ export async function createProject(
     return { success: false, error: "Name and description are required." };
   }
 
+  const imageUrls = parseImageUrls(formData);
+
   const input: CreateProjectInput = {
     name,
     description,
-    imageUrl: (formData.get("imageUrl") as string)?.trim() || undefined,
+    imageUrls,
+    imageUrl: imageUrls[0],
     prdUrl: (formData.get("prdUrl") as string)?.trim() || undefined,
     pptUrl: (formData.get("pptUrl") as string)?.trim() || undefined,
     githubUrl: (formData.get("githubUrl") as string)?.trim() || undefined,
@@ -127,13 +152,13 @@ export async function updateProject(
     return { success: false, error: "Name and description are required." };
   }
 
-  const rawImageUrl = formData.get("imageUrl");
-  const imageUrl = (rawImageUrl as string)?.trim() ?? "";
+  const imageUrls = parseImageUrls(formData);
 
   const input: CreateProjectInput = {
     name,
     description,
-    imageUrl,
+    imageUrls,
+    imageUrl: imageUrls[0] ?? "",
     prdUrl: (formData.get("prdUrl") as string)?.trim() || undefined,
     pptUrl: (formData.get("pptUrl") as string)?.trim() || undefined,
     githubUrl: (formData.get("githubUrl") as string)?.trim() || undefined,

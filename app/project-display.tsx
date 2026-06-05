@@ -27,6 +27,7 @@ import {
   Pencil,
   GripVertical,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Project } from "@/lib/models/Project";
 import { deleteProject } from "@/app/actions/projects";
 import { detectPrdUrlType } from "@/lib/prd-utils";
@@ -77,89 +78,70 @@ function TruncatedDescription({
   );
 }
 
+/** A link button that renders only when its URL exists and is enabled. */
+function ExternalLinkButton({
+  url,
+  enabled,
+  label,
+  icon: Icon,
+  ariaLabel,
+}: {
+  url: string;
+  enabled: boolean;
+  label: string;
+  icon: LucideIcon;
+  ariaLabel: string;
+}) {
+  if (!enabled || !url) return null;
+  return (
+    <Button variant="outline" size="sm" className="min-w-18" asChild>
+      <a href={url} target="_blank" rel="noopener noreferrer" aria-label={ariaLabel}>
+        <Icon className="size-4" />
+        {label}
+      </a>
+    </Button>
+  );
+}
+
 function ProjectLinkButtons({ project }: { project: Project }) {
   const [prdViewerOpen, setPrdViewerOpen] = useState(false);
 
-  const prdIsInline =
-    project.prdEnabled &&
-    !!project.prdUrl &&
-    detectPrdUrlType(project.prdUrl) !== "external";
+  const prdActive = project.prdEnabled && !!project.prdUrl;
+  const prdIsInline = prdActive && detectPrdUrlType(project.prdUrl) !== "external";
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="min-w-18"
-        disabled={!project.prdEnabled || !project.prdUrl}
-        asChild={project.prdEnabled && !!project.prdUrl && !prdIsInline}
-        onClick={prdIsInline ? () => setPrdViewerOpen(true) : undefined}
-      >
-        {project.prdEnabled && project.prdUrl && !prdIsInline ? (
-          <a href={project.prdUrl} target="_blank" rel="noopener noreferrer" aria-label="Open PRD">
-            <FileText className="size-4" />
-            PRD
-          </a>
-        ) : (
-          <span className="inline-flex items-center gap-1.5"><FileText className="size-4" /> PRD</span>
-        )}
-      </Button>
-      {prdIsInline && (
-        <PRDViewerDialog
-          open={prdViewerOpen}
-          onOpenChange={setPrdViewerOpen}
-          url={project.prdUrl}
-          projectName={project.name}
-        />
+      {prdActive && (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-w-18"
+            asChild={!prdIsInline}
+            onClick={prdIsInline ? () => setPrdViewerOpen(true) : undefined}
+          >
+            {prdIsInline ? (
+              <span className="inline-flex items-center gap-1.5"><FileText className="size-4" /> PRD</span>
+            ) : (
+              <a href={project.prdUrl} target="_blank" rel="noopener noreferrer" aria-label="Open PRD">
+                <FileText className="size-4" />
+                PRD
+              </a>
+            )}
+          </Button>
+          {prdIsInline && (
+            <PRDViewerDialog
+              open={prdViewerOpen}
+              onOpenChange={setPrdViewerOpen}
+              url={project.prdUrl}
+              projectName={project.name}
+            />
+          )}
+        </>
       )}
-      <Button
-        variant="outline"
-        size="sm"
-        className="min-w-18"
-        disabled={!project.pptEnabled || !project.pptUrl}
-        asChild={project.pptEnabled && !!project.pptUrl}
-      >
-        {project.pptEnabled && project.pptUrl ? (
-          <a href={project.pptUrl} target="_blank" rel="noopener noreferrer" aria-label="Open PPT">
-            <Presentation className="size-4" />
-            PPT
-          </a>
-        ) : (
-          <span className="inline-flex items-center gap-1.5"><Presentation className="size-4" /> PPT</span>
-        )}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        className="min-w-18"
-        disabled={!project.githubEnabled || !project.githubUrl}
-        asChild={project.githubEnabled && !!project.githubUrl}
-      >
-        {project.githubEnabled && project.githubUrl ? (
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="Open GitHub">
-            <Github className="size-4" />
-            GitHub
-          </a>
-        ) : (
-          <span className="inline-flex items-center gap-1.5"><Github className="size-4" /> GitHub</span>
-        )}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        className="min-w-18"
-        disabled={!project.demoEnabled || !project.demoUrl}
-        asChild={project.demoEnabled && !!project.demoUrl}
-      >
-        {project.demoEnabled && project.demoUrl ? (
-          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Demo">
-            <ExternalLink className="size-4" />
-            Demo
-          </a>
-        ) : (
-          <span className="inline-flex items-center gap-1.5"><ExternalLink className="size-4" /> Demo</span>
-        )}
-      </Button>
+      <ExternalLinkButton url={project.pptUrl} enabled={project.pptEnabled} label="PPT" icon={Presentation} ariaLabel="Open PPT" />
+      <ExternalLinkButton url={project.githubUrl} enabled={project.githubEnabled} label="GitHub" icon={Github} ariaLabel="Open GitHub" />
+      <ExternalLinkButton url={project.demoUrl} enabled={project.demoEnabled} label="Demo" icon={ExternalLink} ariaLabel="Open Demo" />
     </>
   );
 }
